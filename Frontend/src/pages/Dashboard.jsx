@@ -1,31 +1,41 @@
 import '../Dashboard.css'
+import Sidebar from '../components/Sidebar'
 
 function Dashboard() {
   return (
-    <div className="dashboard">
-      <h1>Dashboard</h1>
+    <>
+      <Sidebar />
 
-      <div className="card-container">
-        <div className="card">
-          <h3>Total Projects</h3>
-          <p>5</p>
+      <div className="dashboard">
+        <h1>Dashboard</h1>
+
+        <div className="card-container">
+          <div className="card">
+            <h3>Total Projects</h3>
+            <p>5</p>
+          </div>
+
+          <div className="card">
+            <h3>Total Tasks</h3>
+            <p>25</p>
+          </div>
+
+          <div className="card">
+            <h3>Completed Tasks</h3>
+            <p>18</p>
+          </div>
+
+          <div className="card">
+            <h3>Pending Tasks</h3>
+            <p>7</p>
+          </div>
         </div>
 
-        <div className="card">
-          <h3>Total Tasks</h3>
-          <p>25</p>
-        </div>
-
-        <div className="card">
-          <h3>Completed Tasks</h3>
-          <p>18</p>
-        </div>
+        <button className="create-btn">
+          Create Task
+        </button>
       </div>
-
-      <button className="create-btn">
-        Create Task
-      </button>
-    </div>
+    </>
   )
 }
 

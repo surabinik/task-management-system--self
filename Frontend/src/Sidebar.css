@@ -1,0 +1,49 @@
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background: #1e293b;
+  color: white;
+
+  position: fixed;
+  left: 0;
+  top: 0;
+
+  padding: 20px;
+}
+
+.sidebar h2 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  padding: 15px;
+  cursor: pointer;
+}
+
+.sidebar li:hover {
+  background: #334155;
+  border-radius: 8px;
+}
+
+.sidebar a {
+  color: white;
+  text-decoration: none;
+}
+
+
+
+.sidebar h2 a {
+  color: white;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.sidebar h2 a:hover {
+  color: #4a7dff;
+}
