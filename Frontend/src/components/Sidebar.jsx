@@ -13,7 +13,7 @@ function Sidebar() {
         <li><Link to="/projects">Projects</Link></li>
         <li><Link to="/tasks">Tasks</Link></li>
         <li><Link to="/notifications">Notifications</Link></li>
-        <li>Logout</li>
+        <li><Link to="/login">Logout</Link></li>
       </ul>
     </div>
   )

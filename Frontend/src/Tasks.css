@@ -1,13 +1,13 @@
-.projects-container {
+.tasks-container {
   margin-left: 280px;
   padding: 30px;
 }
 
-.projects-container h1 {
+.tasks-container h1 {
   margin-bottom: 20px;
 }
 
-.create-project-btn {
+.create-task-btn {
   background: #2563eb;
   color: white;
   border: none;
@@ -17,25 +17,25 @@
   margin-bottom: 20px;
 }
 
-.project-table {
+.task-table {
   width: 100%;
   border-collapse: collapse;
   background: white;
 }
 
-.project-table th,
-.project-table td {
+.task-table th,
+.task-table td {
   border: 1px solid #ddd;
   padding: 12px;
   text-align: left;
 }
 
-.project-table th {
+.task-table th {
   background: #1e293b;
   color: white;
 }
 
-.project-table button {
+.task-table button {
   padding: 6px 12px;
   margin-right: 8px;
   border: none;
@@ -43,32 +43,33 @@
   cursor: pointer;
 }
 
-.project-table button:first-child {
+.task-table button:first-child {
   background: #2563eb;
   color: white;
 }
 
-.project-table button:last-child {
+.task-table button:last-child {
   background: #dc2626;
   color: white;
 }
 
-.project-form {
+
+.task-form {
   display: flex;
   gap: 10px;
   justify-content: center;
   margin-bottom: 30px;
 }
 
-.project-form input,
-.project-form select {
+.task-form input,
+.task-form select {
   padding: 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
   min-width: 180px;
 }
 
-.project-form button {
+.task-form button {
   padding: 10px 20px;
   background: #2563eb;
   color: white;
@@ -77,10 +78,6 @@
   cursor: pointer;
 }
 
-.project-form button:hover {
+.task-form button:hover {
   background: #1d4ed8;
-}
-
-.projects-container h1 {
-  margin-bottom: 20px;
 }

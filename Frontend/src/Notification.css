@@ -1,0 +1,26 @@
+.notification-container {
+  margin-left: 280px;
+  padding: 30px;
+}
+
+.notification-container h1 {
+  margin-bottom: 20px;
+}
+
+.notification-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.notification-table th,
+.notification-table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+.notification-table th {
+  background: #1e293b;
+  color: white;
+}
