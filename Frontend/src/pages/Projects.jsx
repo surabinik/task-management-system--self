@@ -25,6 +25,7 @@ function Projects() {
   const [projectName, setProjectName] = useState('')
   const [status, setStatus] = useState('Active')
   const [startDate, setStartDate] = useState('')
+  const [editIndex, setEditIndex] = useState(null)
 
   const addProject = () => {
     if (!projectName || !startDate) return
@@ -35,7 +36,17 @@ function Projects() {
       date: startDate
     }
 
-    setProjects([...projects, newProject])
+    if (editIndex !== null) {
+      const updatedProjects = [...projects]
+
+      updatedProjects[editIndex] = newProject
+
+      setProjects(updatedProjects)
+
+      setEditIndex(null)
+    } else {
+      setProjects([...projects, newProject])
+    }
 
     setProjectName('')
     setStatus('Active')
@@ -46,6 +57,16 @@ function Projects() {
     setProjects(
       projects.filter((_, index) => index !== indexToDelete)
     )
+  }
+
+  const editProject = (index) => {
+    const project = projects[index]
+
+    setProjectName(project.name)
+    setStatus(project.status)
+    setStartDate(project.date)
+
+    setEditIndex(index)
   }
 
   return (
@@ -78,7 +99,7 @@ function Projects() {
           />
 
           <button onClick={addProject}>
-            Add Project
+            {editIndex !== null ? 'Update Project' : 'Add Project'}
           </button>
         </div>
 
@@ -99,11 +120,11 @@ function Projects() {
                 <td>{project.status}</td>
                 <td>{project.date}</td>
                 <td>
-                  <button>Edit</button>
+                  <button onClick={() => editProject(index)}>
+                    Edit
+                  </button>
 
-                  <button
-                    onClick={() => deleteProject(index)}
-                  >
+                  <button onClick={() => deleteProject(index)}>
                     Delete
                   </button>
                 </td>
