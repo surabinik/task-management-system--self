@@ -25,6 +25,7 @@ function Tasks() {
   const [taskName, setTaskName] = useState('')
   const [priority, setPriority] = useState('High')
   const [status, setStatus] = useState('Pending')
+  const [editIndex, setEditIndex] = useState(null)
 
   const addTask = () => {
     if (!taskName) return
@@ -35,7 +36,17 @@ function Tasks() {
       status: status
     }
 
-    setTasks([...tasks, newTask])
+    if (editIndex !== null) {
+      const updatedTasks = [...tasks]
+
+      updatedTasks[editIndex] = newTask
+
+      setTasks(updatedTasks)
+
+      setEditIndex(null)
+    } else {
+      setTasks([...tasks, newTask])
+    }
 
     setTaskName('')
     setPriority('High')
@@ -46,6 +57,16 @@ function Tasks() {
     setTasks(
       tasks.filter((_, index) => index !== indexToDelete)
     )
+  }
+
+  const editTask = (index) => {
+    const task = tasks[index]
+
+    setTaskName(task.name)
+    setPriority(task.priority)
+    setStatus(task.status)
+
+    setEditIndex(index)
   }
 
   return (
@@ -82,7 +103,7 @@ function Tasks() {
           </select>
 
           <button onClick={addTask}>
-            Add Task
+            {editIndex !== null ? 'Update Task' : 'Add Task'}
           </button>
         </div>
 
@@ -103,11 +124,11 @@ function Tasks() {
                 <td>{task.priority}</td>
                 <td>{task.status}</td>
                 <td>
-                  <button>Edit</button>
+                  <button onClick={() => editTask(index)}>
+                    Edit
+                  </button>
 
-                  <button
-                    onClick={() => deleteTask(index)}
-                  >
+                  <button onClick={() => deleteTask(index)}>
                     Delete
                   </button>
                 </td>
