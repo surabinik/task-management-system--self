@@ -8,8 +8,8 @@
 
 .notification-container h1 {
   text-align: center;
-  font-size: 70px;
-  margin-bottom: 40px;
+  font-size: 56px;
+  margin-bottom: 30px;
 }
 
 .notification-form {
@@ -22,7 +22,7 @@
 
 .notification-form input {
   padding: 15px;
-  font-size: 18px;
+  font-size: 16px;
   border: 1px solid #999;
   border-radius: 8px;
   background: #3d3d3d;
@@ -43,7 +43,7 @@
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
 }
 
@@ -52,25 +52,26 @@
 }
 
 .notification-table {
-  width: 85%;
-  margin: auto;
+  width: 100%;
   border-collapse: collapse;
   background: white;
-  color: black;
+  border-radius: 12px;
+  overflow: hidden;
+  table-layout: auto;
 }
 
 .notification-table th {
   background: #1e2b45;
   color: white;
-  padding: 18px;
+  padding: 14px;
   text-align: left;
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .notification-table td {
-  padding: 18px;
+  padding: 14px;
   border: 1px solid #ddd;
-  font-size: 18px;
+  font-size: 15px;
 }
 
 .notification-table button {
@@ -79,7 +80,7 @@
   border-radius: 6px;
   color: white;
   cursor: pointer;
-  margin-right: 8px;
+  
 }
 
 .notification-table button:first-child {
@@ -95,14 +96,38 @@
 }
 
 .search-box {
-  margin: 20px 0;
+  width: 85%;
+  margin: 25px auto;
   display: flex;
   justify-content: center;
 }
 
 .search-box input {
-  padding: 10px;
-  width: 320px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  width: 400px;
+  max-width: 90%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #999;
+}
+.notification-table td:last-child button {
+  margin: 0 5px;
+}
+
+.notification-table th,
+.notification-table td {
+  text-align: center;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.notification-table td {
+  color: black !important;
+}
+.notification-table td,
+.notification-table th {
+  white-space: normal;
+  overflow: visible;
 }

@@ -14,6 +14,7 @@ function Notification() {
 
   useEffect(() => {
     loadNotifications()
+    
   }, [])
 
   const loadNotifications = async () => {
@@ -145,7 +146,7 @@ function Notification() {
         <div className="search-box">
           <input
             type="text"
-            placeholder="Search Notification..."
+            placeholder="🔍 Search Notifications..."
             value={search}
             onChange={(e) =>
               setSearch(e.target.value)
@@ -153,66 +154,59 @@ function Notification() {
           />
         </div>
 
-        <table className="notification-table">
-          <thead>
-            <tr>
-              <th>Message</th>
-              <th>Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+      <div className="table-wrapper">
+  <table className="notification-table">
+    <thead>
+      <tr>
+        <th>Message</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
 
-          <tbody>
-            {notifications
-              .filter((notification) =>
-                notification.message
-                  .toLowerCase()
-                  .includes(
-                    search.toLowerCase()
-                  )
-              )
-              .map((notification) => (
-                <tr key={notification.id}>
-                  <td>
-                    {notification.message}
-                  </td>
+    <tbody>
+      {notifications
+        .filter((notification) =>
+          notification.message
+            .toLowerCase()
+            .includes(search.toLowerCase())
+        )
+        .map((notification) => (
+          <tr key={notification.id}>
+           <td>
+  {notification.message}
+</td>
+            <td>
+  {notification.created_at
+    ? notification.created_at.split('T')[0]
+    : ''}
+</td>
 
-                  <td>
-                    {notification.created_at
-                      ? notification.created_at.split(
-                          'T'
-                        )[0]
-                      : ''}
-                  </td>
+            <td>
+              <button
+                onClick={() =>
+                  editNotification(notification)
+                }
+              >
+                Edit
+              </button>
 
-                  <td>
-                    <button
-                      onClick={() =>
-                        editNotification(
-                          notification
-                        )
-                      }
-                    >
-                      Edit
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        deleteNotification(
-                          notification.id
-                        )
-                      }
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
+              <button
+                onClick={() =>
+                  deleteNotification(notification.id)
+                }
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        ))}
+    </tbody>
+  </table>
+</div>
       </div>
     </>
-  )
+  ) 
 }
 
 export default Notification
