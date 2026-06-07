@@ -1,73 +1,126 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Sidebar from '../components/Sidebar'
 import '../Projects.css'
 
 function Projects() {
-
-  const [projects, setProjects] = useState([
-    {
-      name: 'Website Development',
-      status: 'Active',
-      date: '2026-06-01'
-    },
-    {
-      name: 'Mobile App',
-      status: 'Active',
-      date: '2026-06-05'
-    },
-    {
-      name: 'Research Project',
-      status: 'Completed',
-      date: '2026-05-20'
-    }
-  ])
+  const [projects, setProjects] = useState([])
 
   const [projectName, setProjectName] = useState('')
   const [status, setStatus] = useState('Active')
   const [startDate, setStartDate] = useState('')
-  const [editIndex, setEditIndex] = useState(null)
 
-  const addProject = () => {
+  const [editId, setEditId] = useState(null)
+
+  const [search, setSearch] = useState('')
+
+  useEffect(() => {
+    loadProjects()
+  }, [])
+
+  const loadProjects = async () => {
+    try {
+      const response = await fetch(
+        'http://localhost:5000/projects'
+      )
+
+      const data = await response.json()
+
+      setProjects(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const addProject = async () => {
     if (!projectName || !startDate) return
 
-    const newProject = {
-      name: projectName,
-      status: status,
-      date: startDate
+    try {
+      if (editId) {
+        await fetch(
+          `http://localhost:5000/projects/${editId}`,
+          {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              name: projectName,
+              status,
+              start_date: startDate
+            })
+          }
+        )
+
+        setEditId(null)
+      } else {
+        await fetch(
+          'http://localhost:5000/projects',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              name: projectName,
+              status,
+              start_date: startDate
+            })
+          }
+        )
+      }
+
+      await loadProjects()
+
+      setProjectName('')
+      setStatus('Active')
+      setStartDate('')
+    } catch (error) {
+      console.log(error)
     }
-
-    if (editIndex !== null) {
-      const updatedProjects = [...projects]
-
-      updatedProjects[editIndex] = newProject
-
-      setProjects(updatedProjects)
-
-      setEditIndex(null)
-    } else {
-      setProjects([...projects, newProject])
-    }
-
-    setProjectName('')
-    setStatus('Active')
-    setStartDate('')
   }
 
-  const deleteProject = (indexToDelete) => {
-    setProjects(
-      projects.filter((_, index) => index !== indexToDelete)
-    )
+  const deleteProject = async (id) => {
+    if (
+      !window.confirm(
+        'Are you sure you want to delete this project?'
+      )
+    ) {
+      return
+    }
+
+    try {
+      await fetch(
+        `http://localhost:5000/projects/${id}`,
+        {
+          method: 'DELETE'
+        }
+      )
+
+      await loadProjects()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
-  const editProject = (index) => {
-    const project = projects[index]
-
+  const editProject = (project) => {
     setProjectName(project.name)
     setStatus(project.status)
-    setStartDate(project.date)
 
-    setEditIndex(index)
+    setStartDate(
+      project.start_date
+        ? project.start_date.split('T')[0]
+        : ''
+    )
+
+    setEditId(project.id)
   }
+
+  const filteredProjects = projects.filter(
+    (project) =>
+      project.name
+        .toLowerCase()
+        .includes(search.toLowerCase())
+  )
 
   return (
     <>
@@ -76,17 +129,31 @@ function Projects() {
       <div className="projects-container">
         <h1>Projects</h1>
 
+        <input
+          type="text"
+          placeholder="🔍 Search Projects..."
+          className="search-box"
+          value={search}
+          onChange={(e) =>
+            setSearch(e.target.value)
+          }
+        />
+
         <div className="project-form">
           <input
             type="text"
             placeholder="Project Name"
             value={projectName}
-            onChange={(e) => setProjectName(e.target.value)}
+            onChange={(e) =>
+              setProjectName(e.target.value)
+            }
           />
 
           <select
             value={status}
-            onChange={(e) => setStatus(e.target.value)}
+            onChange={(e) =>
+              setStatus(e.target.value)
+            }
           >
             <option>Active</option>
             <option>Completed</option>
@@ -95,11 +162,15 @@ function Projects() {
           <input
             type="date"
             value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
+            onChange={(e) =>
+              setStartDate(e.target.value)
+            }
           />
 
           <button onClick={addProject}>
-            {editIndex !== null ? 'Update Project' : 'Add Project'}
+            {editId
+              ? 'Update Project'
+              : 'Add Project'}
           </button>
         </div>
 
@@ -114,24 +185,48 @@ function Projects() {
           </thead>
 
           <tbody>
-            {projects.map((project, index) => (
-              <tr key={index}>
+            {filteredProjects.map((project) => (
+              <tr key={project.id}>
                 <td>{project.name}</td>
-                <td>{project.status}</td>
-                <td>{project.date}</td>
+
                 <td>
-                  <button onClick={() => editProject(index)}>
+                  <span
+                    className={
+                      project.status === 'Completed'
+                        ? 'status-completed'
+                        : 'status-active'
+                    }
+                  >
+                    {project.status}
+                  </span>
+                </td>
+
+                <td>
+                  {project.start_date
+                    ? project.start_date.split('T')[0]
+                    : ''}
+                </td>
+
+                <td>
+                  <button
+                    onClick={() =>
+                      editProject(project)
+                    }
+                  >
                     Edit
                   </button>
 
-                  <button onClick={() => deleteProject(index)}>
+                  <button
+                    onClick={() =>
+                      deleteProject(project.id)
+                    }
+                  >
                     Delete
                   </button>
                 </td>
               </tr>
             ))}
           </tbody>
-
         </table>
       </div>
     </>

@@ -2,10 +2,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import '../Sidebar.css'
 
 function Sidebar() {
-
   const navigate = useNavigate()
 
   const handleLogout = () => {
+    localStorage.removeItem('loggedIn')
     navigate('/login')
   }
 
@@ -13,24 +13,41 @@ function Sidebar() {
     <div className="sidebar">
 
       <h2>
-        <Link to="/">Task Manager</Link>
+        <Link to="/dashboard">
+          Task Manager
+        </Link>
       </h2>
 
       <ul>
+
         <li>
-          <Link to="/">Dashboard</Link>
+          <Link to="/dashboard">
+            Dashboard
+          </Link>
         </li>
 
         <li>
-          <Link to="/projects">Projects</Link>
+          <Link to="/projects">
+            Projects
+          </Link>
         </li>
 
         <li>
-          <Link to="/tasks">Tasks</Link>
+          <Link to="/tasks">
+            Tasks
+          </Link>
         </li>
 
         <li>
-          <Link to="/notifications">Notifications</Link>
+          <Link to="/notifications">
+            Notifications
+          </Link>
+        </li>
+
+        <li>
+          <Link to="/users">
+            Users
+          </Link>
         </li>
 
         <li onClick={handleLogout}>

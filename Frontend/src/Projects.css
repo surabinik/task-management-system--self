@@ -84,3 +84,35 @@
 .projects-container h1 {
   margin-bottom: 20px;
 }
+
+.search-box {
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.search-box input {
+  padding: 10px;
+  width: 300px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.search-box {
+  width: 400px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #666;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.status-active {
+  color: #22c55e;
+  font-weight: bold;
+}
+
+.status-completed {
+  color: #2563eb;
+  font-weight: bold;
+}

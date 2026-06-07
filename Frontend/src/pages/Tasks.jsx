@@ -1,73 +1,161 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Sidebar from '../components/Sidebar'
 import '../Tasks.css'
 
 function Tasks() {
-
-  const [tasks, setTasks] = useState([
-    {
-      name: 'Design UI',
-      priority: 'High',
-      status: 'Pending'
-    },
-    {
-      name: 'Build API',
-      priority: 'Medium',
-      status: 'In Progress'
-    },
-    {
-      name: 'Testing',
-      priority: 'Low',
-      status: 'Completed'
-    }
-  ])
+  const [tasks, setTasks] = useState([])
+  const [projects, setProjects] = useState([])
+  const [users, setUsers] = useState([])
 
   const [taskName, setTaskName] = useState('')
   const [priority, setPriority] = useState('High')
   const [status, setStatus] = useState('Pending')
-  const [editIndex, setEditIndex] = useState(null)
+  const [projectId, setProjectId] = useState('')
+  const [assignedUser, setAssignedUser] = useState('')
+  const [dueDate, setDueDate] = useState('')
 
-  const addTask = () => {
-    if (!taskName) return
+  const [editId, setEditId] = useState(null)
+  const [search, setSearch] = useState('')
 
-    const newTask = {
-      name: taskName,
-      priority: priority,
-      status: status
+  useEffect(() => {
+    loadTasks()
+    loadProjects()
+    loadUsers()
+  }, [])
+
+  const loadTasks = async () => {
+    try {
+      const response = await fetch(
+        'http://localhost:5000/tasks'
+      )
+
+      const data = await response.json()
+      setTasks(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const loadProjects = async () => {
+    try {
+      const response = await fetch(
+        'http://localhost:5000/projects'
+      )
+
+      const data = await response.json()
+      setProjects(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const loadUsers = async () => {
+    try {
+      const response = await fetch(
+        'http://localhost:5000/users'
+      )
+
+      const data = await response.json()
+      setUsers(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  
+const saveTask = async () => {
+  if (!taskName) return
+
+  try {
+    const taskData = {
+      task_name: taskName,
+      priority,
+      status,
+      project_id: projectId,
+      assigned_user: assignedUser,
+      due_date: dueDate
     }
 
-    if (editIndex !== null) {
-      const updatedTasks = [...tasks]
+    console.log('TASK DATA:', taskData)
 
-      updatedTasks[editIndex] = newTask
+    if (editId) {
+      await fetch(
+        `http://localhost:5000/tasks/${editId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(taskData)
+        }
+      )
 
-      setTasks(updatedTasks)
-
-      setEditIndex(null)
+      setEditId(null)
     } else {
-      setTasks([...tasks, newTask])
+      await fetch(
+        'http://localhost:5000/tasks',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(taskData)
+        }
+      )
     }
 
     setTaskName('')
     setPriority('High')
     setStatus('Pending')
+    setProjectId('')
+    setAssignedUser('')
+    setDueDate('')
+
+    loadTasks()
+  } catch (error) {
+    console.log(error)
   }
+}
 
-  const deleteTask = (indexToDelete) => {
-    setTasks(
-      tasks.filter((_, index) => index !== indexToDelete)
-    )
-  }
-
-  const editTask = (index) => {
-    const task = tasks[index]
-
-    setTaskName(task.name)
+  const editTask = (task) => {
+    setTaskName(task.task_name)
     setPriority(task.priority)
     setStatus(task.status)
+    setProjectId(task.project_id || '')
+    setAssignedUser(task.assigned_user || '')
 
-    setEditIndex(index)
+    setDueDate(
+      task.due_date
+        ? task.due_date.split('T')[0]
+        : ''
+    )
+
+    setEditId(task.id)
   }
+
+  const deleteTask = async (id) => {
+    if (!window.confirm('Delete this task?'))
+      return
+
+    try {
+      await fetch(
+        `http://localhost:5000/tasks/${id}`,
+        {
+          method: 'DELETE'
+        }
+      )
+
+      loadTasks()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const filteredTasks = tasks.filter((task) =>
+    task.task_name
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  )
 
   return (
     <>
@@ -76,17 +164,31 @@ function Tasks() {
       <div className="tasks-container">
         <h1>Tasks</h1>
 
+        <input
+          className="search-box"
+          type="text"
+          placeholder="🔍 Search Tasks..."
+          value={search}
+          onChange={(e) =>
+            setSearch(e.target.value)
+          }
+        />
+
         <div className="task-form">
-          <input
-            type="text"
-            placeholder="Task Name"
-            value={taskName}
-            onChange={(e) => setTaskName(e.target.value)}
-          />
+                    <input
+  type="text"
+  placeholder="Task Name"
+  value={taskName}
+  onChange={(e) =>
+    setTaskName(e.target.value)
+  }
+/>
 
           <select
             value={priority}
-            onChange={(e) => setPriority(e.target.value)}
+            onChange={(e) =>
+              setPriority(e.target.value)
+            }
           >
             <option>High</option>
             <option>Medium</option>
@@ -95,48 +197,128 @@ function Tasks() {
 
           <select
             value={status}
-            onChange={(e) => setStatus(e.target.value)}
+            onChange={(e) =>
+              setStatus(e.target.value)
+            }
           >
             <option>Pending</option>
             <option>In Progress</option>
             <option>Completed</option>
           </select>
 
-          <button onClick={addTask}>
-            {editIndex !== null ? 'Update Task' : 'Add Task'}
+          <select
+            value={projectId}
+            onChange={(e) =>
+              setProjectId(e.target.value)
+            }
+          >
+            <option value="">
+              Select Project
+            </option>
+
+            {projects.map((project) => (
+              <option
+                key={project.id}
+                value={project.id}
+              >
+                {project.name}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={assignedUser}
+            onChange={(e) =>
+              setAssignedUser(e.target.value)
+            }
+          >
+            <option value="">
+              Assign User
+            </option>
+
+            {users.map((user) => (
+              <option
+                key={user.id}
+                value={user.id}
+              >
+                {user.username}
+              </option>
+            ))}
+          </select>
+
+          <input
+            type="date"
+            value={dueDate}
+            onChange={(e) =>
+              setDueDate(e.target.value)
+            }
+          />
+
+          <button onClick={saveTask}>
+            {editId
+              ? 'Update Task'
+              : 'Add Task'}
           </button>
         </div>
+<div className="table-wrapper">
+  <table className="task-table">
+    <thead>
+      <tr>
+        <th>Task Name</th>
+        <th>Project</th>
+        <th>Assigned User</th>
+        <th>Due Date</th>
+        <th>Priority</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
 
-        <table className="task-table">
-          <thead>
-            <tr>
-              <th>Task Name</th>
-              <th>Priority</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+    <tbody>
+      {filteredTasks.map((task) => (
+        <tr key={task.id}>
+          <td>{task.task_name}</td>
 
-          <tbody>
-            {tasks.map((task, index) => (
-              <tr key={index}>
-                <td>{task.name}</td>
-                <td>{task.priority}</td>
-                <td>{task.status}</td>
-                <td>
-                  <button onClick={() => editTask(index)}>
-                    Edit
-                  </button>
+          <td>{task.project_name || '-'}</td>
 
-                  <button onClick={() => deleteTask(index)}>
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+          <td>{task.assigned_username || '-'}</td>
 
-        </table>
+          <td>
+            {task.due_date
+              ? task.due_date.toString().split('T')[0]
+              : '-'}
+          </td>
+
+          <td>
+            <span
+              className={
+                task.priority === 'High'
+                  ? 'priority-high'
+                  : task.priority === 'Medium'
+                  ? 'priority-medium'
+                  : 'priority-low'
+              }
+            >
+              {task.priority}
+            </span>
+          </td>
+
+          <td>{task.status}</td>
+
+          <td className="action-buttons">
+  <button onClick={() => editTask(task)}>
+    Edit
+  </button>
+
+  <button onClick={() => deleteTask(task.id)}>
+    Delete
+  </button>
+</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
       </div>
     </>
   )
