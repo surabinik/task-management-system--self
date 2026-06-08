@@ -21,6 +21,12 @@ function Dashboard() {
   const [recentNotifications, setRecentNotifications] =
     useState([])
 
+  const username =
+    localStorage.getItem('username')
+
+  const role =
+    localStorage.getItem('role')
+
   useEffect(() => {
     loadDashboard()
   }, [])
@@ -47,7 +53,9 @@ function Dashboard() {
         fetch(
           'http://localhost:5000/dashboard/pendingTasks'
         ),
-        fetch('http://localhost:5000/users'),
+        fetch(
+          'http://localhost:5000/users'
+        ),
         fetch(
           'http://localhost:5000/notifications'
         )
@@ -113,9 +121,13 @@ function Dashboard() {
     }
   ]
 
-  const COLORS = ['#22c55e', '#ef4444']
+  const COLORS = [
+    '#22c55e',
+    '#ef4444'
+  ]
 
-  const today = new Date().toLocaleDateString()
+  const today =
+    new Date().toLocaleDateString()
 
   return (
     <>
@@ -125,14 +137,12 @@ function Dashboard() {
         <h1>Dashboard</h1>
 
         <h3 className="welcome-text">
-          Welcome Admin 👋
+          Welcome {username || role} 👋
         </h3>
 
         <p className="dashboard-date">
           Today: {today}
         </p>
-
-        {/* Statistics Cards */}
 
         <div className="card-container">
           <div className="card">
@@ -161,8 +171,6 @@ function Dashboard() {
           </div>
         </div>
 
-        {/* Progress */}
-
         <div className="progress-section">
           <h2>Task Completion Rate</h2>
 
@@ -179,8 +187,6 @@ function Dashboard() {
             {completionRate}% Completed
           </p>
         </div>
-
-        {/* Chart + Recent Activities */}
 
         <div className="chart-recent-container">
           <div className="chart-section">

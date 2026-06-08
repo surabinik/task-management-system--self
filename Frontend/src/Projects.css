@@ -116,3 +116,8 @@
   color: #2563eb;
   font-weight: bold;
 }
+
+.status-archived {
+  color: gray;
+  font-weight: bold;
+}

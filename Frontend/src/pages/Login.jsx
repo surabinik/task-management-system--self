@@ -26,14 +26,25 @@ function Login() {
 
       const data = await response.json()
 
-      if (data.success) {
-        localStorage.setItem(
-          'loggedIn',
-          'true'
-        )
+   if (data.success) {
+  localStorage.setItem(
+    'loggedIn',
+    'true'
+  )
 
-        navigate('/dashboard')
-      } else {
+  localStorage.setItem(
+    'role',
+    data.role
+  )
+
+  localStorage.setItem(
+    'username',
+    username
+  )
+
+  navigate('/dashboard')
+}
+else {
         alert(
           'Invalid Username or Password'
         )

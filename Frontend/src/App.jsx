@@ -35,7 +35,7 @@ function App() {
       <Route
         path="/projects"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute >
             <Projects />
           </ProtectedRoute>
         }
@@ -53,7 +53,7 @@ function App() {
       <Route
         path="/notifications"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute >
             <Notification />
           </ProtectedRoute>
         }
@@ -62,7 +62,7 @@ function App() {
       <Route
         path="/users"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute adminOnly={true}>
             <Users />
           </ProtectedRoute>
         }

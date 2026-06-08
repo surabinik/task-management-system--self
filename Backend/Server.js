@@ -381,20 +381,28 @@ app.get('/dashboard/notifications', (req, res) => {
 /* ===========================
    LOGIN
 =========================== */
+/* ===========================
+   LOGIN
+=========================== */
 
 app.post('/login', (req, res) => {
-  const {
-    username,
-    password
-  } = req.body
+  const { username, password } = req.body
+
+  console.log('LOGIN ATTEMPT:')
+  console.log('Username:', username)
+  console.log('Password:', password)
 
   db.query(
     'SELECT * FROM users WHERE username=? AND password=?',
     [username, password],
     (err, result) => {
       if (err) {
+        console.log(err)
         return res.status(500).json(err)
       }
+
+      console.log('RESULT:')
+      console.log(result)
 
       if (result.length > 0) {
         res.json({

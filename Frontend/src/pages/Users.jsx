@@ -8,7 +8,7 @@ function Users() {
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [role, setRole] = useState('User')
+  const [role, setRole] = useState('Collaborator')
 
   const [editId, setEditId] = useState(null)
 
@@ -31,11 +31,16 @@ function Users() {
   }
 
   const saveUser = async () => {
-    if (!username || !password) return
+    if (!username.trim() || !password.trim()) {
+      alert('Username and Password are required')
+      return
+    }
 
     try {
+      let response
+
       if (editId) {
-        await fetch(
+        response = await fetch(
           `http://localhost:5000/users/${editId}`,
           {
             method: 'PUT',
@@ -52,7 +57,7 @@ function Users() {
 
         setEditId(null)
       } else {
-        await fetch(
+        response = await fetch(
           'http://localhost:5000/users',
           {
             method: 'POST',
@@ -68,48 +73,54 @@ function Users() {
         )
       }
 
+      if (!response.ok) {
+        throw new Error('Failed to save user')
+      }
+
       setUsername('')
       setPassword('')
-      setRole('User')
+      setRole('Collaborator')
 
-      loadUsers()
+      await loadUsers()
     } catch (error) {
       console.log(error)
+      alert('Error saving user')
     }
   }
 
   const editUser = (user) => {
     setUsername(user.username)
-    setPassword(user.password)
+    setPassword(user.password || '')
     setRole(user.role)
 
     setEditId(user.id)
   }
 
   const deleteUser = async (id) => {
-    if (
-      !window.confirm(
-        'Delete this user?'
-      )
-    )
+    if (!window.confirm('Delete this user?'))
       return
 
-    await fetch(
-      `http://localhost:5000/users/${id}`,
-      {
-        method: 'DELETE'
-      }
-    )
+    try {
+      await fetch(
+        `http://localhost:5000/users/${id}`,
+        {
+          method: 'DELETE'
+        }
+      )
 
-    loadUsers()
+      await loadUsers()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
-  const filteredUsers =
-    users.filter((user) =>
+  const filteredUsers = users.filter(
+    (user) =>
+      user.username &&
       user.username
         .toLowerCase()
         .includes(search.toLowerCase())
-    )
+  )
 
   return (
     <>
@@ -130,16 +141,16 @@ function Users() {
 
         <div className="user-form">
           <input
-  type="password"
-  placeholder="Password"
-  value={password}
-  onChange={(e) =>
-    setPassword(e.target.value)
-  }
-/>
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) =>
+              setUsername(e.target.value)
+            }
+          />
 
           <input
-            type="text"
+            type="password"
             placeholder="Password"
             value={password}
             onChange={(e) =>
@@ -153,9 +164,17 @@ function Users() {
               setRole(e.target.value)
             }
           >
-            <option>Admin</option>
-<option>Project Manager</option>
-<option>Collaborator</option>
+            <option value="Admin">
+              Admin
+            </option>
+
+            <option value="Project Manager">
+              Project Manager
+            </option>
+
+            <option value="Collaborator">
+              Collaborator
+            </option>
           </select>
 
           <button onClick={saveUser}>

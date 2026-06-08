@@ -4,17 +4,24 @@ import '../Notification.css'
 
 function Notification() {
   const [notifications, setNotifications] = useState([])
-
   const [message, setMessage] = useState('')
   const [date, setDate] = useState('')
-
   const [editId, setEditId] = useState(null)
-
   const [search, setSearch] = useState('')
+
+  const role =
+  localStorage.getItem('role');
+  console.log(
+  'ROLE:',
+  localStorage.getItem('role')
+);
+
+const canManage =
+  role === 'Admin' ||
+  role === 'Project Manager'
 
   useEffect(() => {
     loadNotifications()
-    
   }, [])
 
   const loadNotifications = async () => {
@@ -111,6 +118,13 @@ function Notification() {
     setEditId(notification.id)
   }
 
+  const filteredNotifications =
+    notifications.filter((notification) =>
+      notification.message
+        .toLowerCase()
+        .includes(search.toLowerCase())
+    )
+
   return (
     <>
       <Sidebar />
@@ -118,30 +132,32 @@ function Notification() {
       <div className="notification-container">
         <h1>Notifications</h1>
 
-        <div className="notification-form">
-          <input
-            type="text"
-            placeholder="Notification Message"
-            value={message}
-            onChange={(e) =>
-              setMessage(e.target.value)
-            }
-          />
+        {canManage && (
+          <div className="notification-form">
+            <input
+              type="text"
+              placeholder="Notification Message"
+              value={message}
+              onChange={(e) =>
+                setMessage(e.target.value)
+              }
+            />
 
-          <input
-            type="date"
-            value={date}
-            onChange={(e) =>
-              setDate(e.target.value)
-            }
-          />
+            <input
+              type="date"
+              value={date}
+              onChange={(e) =>
+                setDate(e.target.value)
+              }
+            />
 
-          <button onClick={addNotification}>
-            {editId
-              ? 'Update Notification'
-              : 'Add Notification'}
-          </button>
-        </div>
+            <button onClick={addNotification}>
+              {editId
+                ? 'Update Notification'
+                : 'Add Notification'}
+            </button>
+          </div>
+        )}
 
         <div className="search-box">
           <input
@@ -154,59 +170,67 @@ function Notification() {
           />
         </div>
 
-      <div className="table-wrapper">
-  <table className="notification-table">
-    <thead>
-      <tr>
-        <th>Message</th>
-        <th>Date</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
+        <div className="table-wrapper">
+          <table className="notification-table">
+            <thead>
+              <tr>
+                <th>Message</th>
+                <th>Date</th>
 
-    <tbody>
-      {notifications
-        .filter((notification) =>
-          notification.message
-            .toLowerCase()
-            .includes(search.toLowerCase())
-        )
-        .map((notification) => (
-          <tr key={notification.id}>
-           <td>
-  {notification.message}
-</td>
-            <td>
-  {notification.created_at
-    ? notification.created_at.split('T')[0]
-    : ''}
-</td>
+                {canManage && (
+                  <th>Actions</th>
+                )}
+              </tr>
+            </thead>
 
-            <td>
-              <button
-                onClick={() =>
-                  editNotification(notification)
-                }
-              >
-                Edit
-              </button>
+            <tbody>
+              {filteredNotifications.map(
+                (notification) => (
+                  <tr key={notification.id}>
+                    <td>
+                      {notification.message}
+                    </td>
 
-              <button
-                onClick={() =>
-                  deleteNotification(notification.id)
-                }
-              >
-                Delete
-              </button>
-            </td>
-          </tr>
-        ))}
-    </tbody>
-  </table>
-</div>
+                    <td>
+                      {notification.created_at
+                        ? notification.created_at.split(
+                            'T'
+                          )[0]
+                        : ''}
+                    </td>
+
+                    {canManage && (
+                      <td>
+                        <button
+                          onClick={() =>
+                            editNotification(
+                              notification
+                            )
+                          }
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            deleteNotification(
+                              notification.id
+                            )
+                          }
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                )
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </>
-  ) 
+  )
 }
 
 export default Notification

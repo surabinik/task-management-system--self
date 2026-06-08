@@ -3,6 +3,8 @@ import Sidebar from '../components/Sidebar'
 import '../Projects.css'
 
 function Projects() {
+  const role = localStorage.getItem('role')
+
   const [projects, setProjects] = useState([])
 
   const [projectName, setProjectName] = useState('')
@@ -41,7 +43,8 @@ function Projects() {
           {
             method: 'PUT',
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type':
+                'application/json'
             },
             body: JSON.stringify({
               name: projectName,
@@ -58,7 +61,8 @@ function Projects() {
           {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type':
+                'application/json'
             },
             body: JSON.stringify({
               name: projectName,
@@ -74,6 +78,33 @@ function Projects() {
       setProjectName('')
       setStatus('Active')
       setStartDate('')
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const archiveProject = async (
+    project
+  ) => {
+    try {
+      await fetch(
+        `http://localhost:5000/projects/${project.id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type':
+              'application/json'
+          },
+          body: JSON.stringify({
+            name: project.name,
+            status: 'Archived',
+            start_date:
+              project.start_date
+          })
+        }
+      )
+
+      loadProjects()
     } catch (error) {
       console.log(error)
     }
@@ -115,12 +146,12 @@ function Projects() {
     setEditId(project.id)
   }
 
-  const filteredProjects = projects.filter(
-    (project) =>
+  const filteredProjects =
+    projects.filter((project) =>
       project.name
         .toLowerCase()
         .includes(search.toLowerCase())
-  )
+    )
 
   return (
     <>
@@ -139,40 +170,57 @@ function Projects() {
           }
         />
 
-        <div className="project-form">
-          <input
-            type="text"
-            placeholder="Project Name"
-            value={projectName}
-            onChange={(e) =>
-              setProjectName(e.target.value)
-            }
-          />
+        {(role === 'Admin' ||
+          role ===
+            'Project Manager') && (
+          <div className="project-form">
+            <input
+              type="text"
+              placeholder="Project Name"
+              value={projectName}
+              onChange={(e) =>
+                setProjectName(
+                  e.target.value
+                )
+              }
+            />
 
-          <select
-            value={status}
-            onChange={(e) =>
-              setStatus(e.target.value)
-            }
-          >
-            <option>Active</option>
-            <option>Completed</option>
-          </select>
+            <select
+              value={status}
+              onChange={(e) =>
+                setStatus(
+                  e.target.value
+                )
+              }
+            >
+              <option>Active</option>
+              <option>
+                Completed
+              </option>
+              <option>
+                Archived
+              </option>
+            </select>
 
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) =>
-              setStartDate(e.target.value)
-            }
-          />
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) =>
+                setStartDate(
+                  e.target.value
+                )
+              }
+            />
 
-          <button onClick={addProject}>
-            {editId
-              ? 'Update Project'
-              : 'Add Project'}
-          </button>
-        </div>
+            <button
+              onClick={addProject}
+            >
+              {editId
+                ? 'Update Project'
+                : 'Add Project'}
+            </button>
+          </div>
+        )}
 
         <table className="project-table">
           <thead>
@@ -185,47 +233,84 @@ function Projects() {
           </thead>
 
           <tbody>
-            {filteredProjects.map((project) => (
-              <tr key={project.id}>
-                <td>{project.name}</td>
+            {filteredProjects.map(
+              (project) => (
+                <tr key={project.id}>
+                  <td>
+                    {project.name}
+                  </td>
 
-                <td>
-                  <span
-                    className={
-                      project.status === 'Completed'
-                        ? 'status-completed'
-                        : 'status-active'
-                    }
-                  >
-                    {project.status}
-                  </span>
-                </td>
+                  <td>
+                    <span
+                      className={
+                        project.status ===
+                        'Completed'
+                          ? 'status-completed'
+                          : project.status ===
+                            'Archived'
+                          ? 'status-archived'
+                          : 'status-active'
+                      }
+                    >
+                      {project.status}
+                    </span>
+                  </td>
 
-                <td>
-                  {project.start_date
-                    ? project.start_date.split('T')[0]
-                    : ''}
-                </td>
+                  <td>
+                    {project.start_date
+                      ? project.start_date.split(
+                          'T'
+                        )[0]
+                      : ''}
+                  </td>
 
-                <td>
-                  <button
-                    onClick={() =>
-                      editProject(project)
-                    }
-                  >
-                    Edit
-                  </button>
+                  <td>
+                    {(role ===
+                      'Admin' ||
+                      role ===
+                        'Project Manager') && (
+                      <button
+                        onClick={() =>
+                          editProject(
+                            project
+                          )
+                        }
+                      >
+                        Edit
+                      </button>
+                    )}
 
-                  <button
-                    onClick={() =>
-                      deleteProject(project.id)
-                    }
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
+                    {role ===
+                      'Admin' && (
+                      <button
+                        onClick={() =>
+                          deleteProject(
+                            project.id
+                          )
+                        }
+                      >
+                        Delete
+                      </button>
+                    )}
+
+                    {role ===
+                      'Project Manager' &&
+                      project.status !==
+                        'Archived' && (
+                        <button
+                          onClick={() =>
+                            archiveProject(
+                              project
+                            )
+                          }
+                        >
+                          Archive
+                        </button>
+                      )}
+                  </td>
+                </tr>
+              )
+            )}
           </tbody>
         </table>
       </div>
