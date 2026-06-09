@@ -57,13 +57,22 @@ app.put('/projects/:id', (req, res) => {
     start_date
   } = req.body
 
+  console.log('UPDATE PROJECT')
+  console.log(req.body)
+
   db.query(
     'UPDATE projects SET name=?, status=?, start_date=? WHERE id=?',
     [name, status, start_date, id],
     (err, result) => {
       if (err) {
+        console.log('MYSQL ERROR:')
+        console.log(err)
+
         return res.status(500).json(err)
       }
+
+      console.log('SUCCESS:')
+      console.log(result)
 
       res.json(result)
     }

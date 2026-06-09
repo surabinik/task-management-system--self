@@ -6,13 +6,10 @@ function Projects() {
   const role = localStorage.getItem('role')
 
   const [projects, setProjects] = useState([])
-
   const [projectName, setProjectName] = useState('')
   const [status, setStatus] = useState('Active')
   const [startDate, setStartDate] = useState('')
-
   const [editId, setEditId] = useState(null)
-
   const [search, setSearch] = useState('')
 
   useEffect(() => {
@@ -83,10 +80,15 @@ function Projects() {
     }
   }
 
-  const archiveProject = async (
+  const toggleProjectStatus = async (
     project
   ) => {
     try {
+      const newStatus =
+        project.status === 'Archived'
+          ? 'Active'
+          : 'Archived'
+
       await fetch(
         `http://localhost:5000/projects/${project.id}`,
         {
@@ -97,14 +99,16 @@ function Projects() {
           },
           body: JSON.stringify({
             name: project.name,
-            status: 'Archived',
+            status: newStatus,
             start_date:
+              project.start_date
+                ?.split('T')[0] ||
               project.start_date
           })
         }
       )
 
-      loadProjects()
+      await loadProjects()
     } catch (error) {
       console.log(error)
     }
@@ -265,21 +269,17 @@ function Projects() {
                   </td>
 
                   <td>
-                    {(role ===
-                      'Admin' ||
-                      role ===
-                        'Project Manager') && (
-                      <button
-                        onClick={() =>
-                          editProject(
-                            project
-                          )
-                        }
-                      >
-                        Edit
-                      </button>
-                    )}
-
+                   {(role === 'Admin' ||
+  role === 'Project Manager') &&
+  project.status !== 'Archived' && (
+    <button
+      onClick={() =>
+        editProject(project)
+      }
+    >
+      Edit
+    </button>
+)}
                     {role ===
                       'Admin' && (
                       <button
@@ -294,19 +294,20 @@ function Projects() {
                     )}
 
                     {role ===
-                      'Project Manager' &&
-                      project.status !==
-                        'Archived' && (
-                        <button
-                          onClick={() =>
-                            archiveProject(
-                              project
-                            )
-                          }
-                        >
-                          Archive
-                        </button>
-                      )}
+                      'Project Manager' && (
+                      <button
+                        onClick={() =>
+                          toggleProjectStatus(
+                            project
+                          )
+                        }
+                      >
+                        {project.status ===
+                        'Archived'
+                          ? 'Restore'
+                          : 'Archive'}
+                      </button>
+                    )}
                   </td>
                 </tr>
               )

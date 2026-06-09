@@ -11,14 +11,10 @@ function Notification() {
 
   const role =
   localStorage.getItem('role');
-  console.log(
-  'ROLE:',
-  localStorage.getItem('role')
-);
+  
 
 const canManage =
-  role === 'Admin' ||
-  role === 'Project Manager'
+  role === 'Admin' 
 
   useEffect(() => {
     loadNotifications()
@@ -201,26 +197,30 @@ const canManage =
 
                     {canManage && (
                       <td>
-                        <button
-                          onClick={() =>
-                            editNotification(
-                              notification
-                            )
-                          }
-                        >
-                          Edit
-                        </button>
+  {role === 'Admin' && (
+    <>
+      <button
+        onClick={() =>
+          editNotification(
+            notification
+          )
+        }
+      >
+        Edit
+      </button>
 
-                        <button
-                          onClick={() =>
-                            deleteNotification(
-                              notification.id
-                            )
-                          }
-                        >
-                          Delete
-                        </button>
-                      </td>
+      <button
+        onClick={() =>
+          deleteNotification(
+            notification.id
+          )
+        }
+      >
+        Delete
+      </button>
+    </>
+  )}
+</td>
                     )}
                   </tr>
                 )
