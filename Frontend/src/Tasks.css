@@ -3,7 +3,7 @@
 ========================= */
 
 .tasks-container {
-  margin-left: 260px;
+  margin-left: 270px;
   padding: 30px;
   min-height: 100vh;
   color: white;
@@ -32,6 +32,28 @@
 }
 
 /* =========================
+   Filters
+========================= */
+
+.filter-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 15px 0 25px 0;
+  flex-wrap: wrap;
+}
+
+.filter-container select {
+  width: 180px;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #2f2f2f;
+  color: white;
+  border: 1px solid #666;
+}
+
+/* =========================
    Form
 ========================= */
 
@@ -39,7 +61,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 15px;
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto 30px auto;
 }
 
@@ -74,7 +96,6 @@
 
 .table-wrapper {
   width: 100%;
-  overflow-x: auto;
   margin-top: 20px;
 }
 
@@ -85,10 +106,10 @@
 .task-table {
   width: 100%;
   border-collapse: collapse;
-  background: white;
-  color: black;
+  background: #1e293b;
+  color: white;
+  table-layout: auto;
 }
-
 .task-table th {
   background: #1e293b;
   color: white;
@@ -98,16 +119,16 @@
 
 .task-table td {
   padding: 12px;
-  border: 1px solid #ddd;
+  border: 1px solid rgba(255,255,255,0.08);
   text-align: center;
 }
 
 .task-table tr:nth-child(even) {
-  background: #f8fafc;
+  background: rgba(255,255,255,0.03);
 }
 
 .task-table tr:hover {
-  background: #f1f5f9;
+  background: rgba(59,130,246,0.08);
 }
 
 /* =========================
@@ -122,10 +143,17 @@
 
 .task-table button {
   border: none;
-  border-radius: 6px;
-  padding: 6px 12px;
-  cursor: pointer;
-  color: white;
+  border-radius: 10px;
+
+  padding: 8px 16px;
+
+  font-weight: 600;
+
+  transition: 0.3s;
+}
+
+.task-table button:hover {
+  transform: translateY(-2px);
 }
 
 .task-table button:first-child {
@@ -156,8 +184,27 @@
 }
 
 /* =========================
+   Overdue Tasks
+========================= */
+
+.overdue-row {
+  background-color: rgba(239, 68, 68, 0.15);
+}
+
+.overdue-row td {
+  border-left: 3px solid #ef4444;
+}
+
+/* =========================
    Responsive
 ========================= */
+
+@media (max-width: 1200px) {
+  .tasks-container {
+    margin-left: 240px;
+    padding: 25px;
+  }
+}
 
 @media (max-width: 1000px) {
   .task-form {
@@ -166,6 +213,10 @@
 
   .task-form button {
     grid-column: span 1;
+  }
+
+  .tasks-container {
+    margin-left: 220px;
   }
 }
 
@@ -178,4 +229,80 @@
   .tasks-container h1 {
     font-size: 2.5rem;
   }
+
+  .filter-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .filter-container select {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+
+.status-pending {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
+.status-completed {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+
+.status-progress {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+.priority-chip,
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 10px;
+
+  border-radius: 999px;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+.priority-high {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.priority-medium {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
+.priority-low {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+
+
+.task-table td {
+  padding: 18px 12px;
+}
+
+.task-table th {
+  padding: 18px 12px;
+}
+
+.task-table-card {
+  background: #1e293b;
+
+  border-radius: 20px;
+
+  padding: 20px;
+
+  margin-top: 25px;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.25);
 }

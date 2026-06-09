@@ -21,6 +21,14 @@ function Tasks() {
   const [editId, setEditId] = useState(null)
   const [search, setSearch] = useState('')
 
+  
+
+const [statusFilter, setStatusFilter] =
+  useState('All')
+
+const [priorityFilter, setPriorityFilter] =
+  useState('All')
+
   useEffect(() => {
     loadTasks()
     loadProjects()
@@ -154,26 +162,28 @@ function Tasks() {
   }
 
   const deleteTask = async (id) => {
-    if (
-      !window.confirm(
-        'Delete this task?'
-      )
+
+  if (
+    !window.confirm(
+      'Are you sure you want to delete this task?'
     )
-      return
-
-    try {
-      await fetch(
-        `http://localhost:5000/tasks/${id}`,
-        {
-          method: 'DELETE'
-        }
-      )
-
-      loadTasks()
-    } catch (error) {
-      console.log(error)
-    }
+  ) {
+    return
   }
+
+  try {
+    await fetch(
+      `http://localhost:5000/tasks/${id}`,
+      {
+        method: 'DELETE'
+      }
+    )
+
+    loadTasks()
+  } catch (error) {
+    console.log(error)
+  }
+}
 const visibleTasks = Array.isArray(tasks)
   ? (
       role === 'Collaborator'
@@ -185,11 +195,33 @@ const visibleTasks = Array.isArray(tasks)
     )
   : []
 
+  console.log('tasks:', tasks)
+console.log('visibleTasks:', visibleTasks)
+
+
 const filteredTasks = visibleTasks.filter(
-  (task) =>
-    task.task_name
-      .toLowerCase()
-      .includes(search.toLowerCase())
+  (task) => {
+    const matchesSearch =
+      task.task_name
+        .toLowerCase()
+        .includes(search.toLowerCase())
+
+    const matchesStatus =
+      statusFilter === 'All'
+        ? true
+        : task.status === statusFilter
+
+    const matchesPriority =
+      priorityFilter === 'All'
+        ? true
+        : task.priority === priorityFilter
+
+    return (
+      matchesSearch &&
+      matchesStatus &&
+      matchesPriority
+    )
+  }
 )
 
 
@@ -201,16 +233,60 @@ const filteredTasks = visibleTasks.filter(
         <h1>Tasks</h1>
 
         <input
-          className="search-box"
-          type="text"
-          placeholder="🔍 Search Tasks..."
-          value={search}
-          onChange={(e) =>
-            setSearch(
-              e.target.value
-            )
-          }
-        />
+  className="search-box"
+  type="text"
+  placeholder="🔍 Search Tasks..."
+  value={search}
+  onChange={(e) =>
+    setSearch(
+      e.target.value
+    )
+  }
+/>
+
+<div className="filter-container">
+
+  <select
+    value={statusFilter}
+    onChange={(e) =>
+      setStatusFilter(e.target.value)
+    }
+  >
+    <option value="All">
+      All Statuses
+    </option>
+    <option value="Pending">
+      Pending
+    </option>
+    <option value="In Progress">
+      In Progress
+    </option>
+    <option value="Completed">
+      Completed
+    </option>
+  </select>
+
+  <select
+    value={priorityFilter}
+    onChange={(e) =>
+      setPriorityFilter(e.target.value)
+    }
+  >
+    <option value="All">
+      All Priorities
+    </option>
+    <option value="High">
+      High
+    </option>
+    <option value="Medium">
+      Medium
+    </option>
+    <option value="Low">
+      Low
+    </option>
+  </select>
+
+</div>
 
         {(role === 'Admin' ||
           role ===
@@ -330,7 +406,7 @@ const filteredTasks = visibleTasks.filter(
             </button>
           </div>
         )}
-
+        <div classname="task-table-card">
         <div className="table-wrapper">
           <table className="task-table">
             <thead>
@@ -354,11 +430,24 @@ const filteredTasks = visibleTasks.filter(
             </thead>
 
             <tbody>
-              {filteredTasks.map(
-                (task) => (
-                  <tr
-                    key={task.id}
-                  >
+  {filteredTasks.map(
+    (task) => {
+
+      const isOverdue =
+        task.due_date &&
+        new Date(task.due_date) <
+          new Date() &&
+        task.status !== 'Completed'
+
+      return (
+        <tr
+          key={task.id}
+          className={
+            isOverdue
+              ? 'overdue-row'
+              : ''
+          }
+        >
                     <td>
                       {
                         task.task_name
@@ -385,28 +474,39 @@ const filteredTasks = visibleTasks.filter(
                         : '-'}
                     </td>
 
-                    <td>
-                      <span
-                        className={
-                          task.priority ===
-                          'High'
-                            ? 'priority-high'
-                            : task.priority ===
-                              'Medium'
-                            ? 'priority-medium'
-                            : 'priority-low'
-                        }
-                      >
-                        {
-                          task.priority
-                        }
-                      </span>
-                    </td>
+                   <td>
+  <span
+    className={`priority-chip ${
+      task.priority === 'High'
+        ? 'priority-high'
+        : task.priority === 'Medium'
+        ? 'priority-medium'
+        : 'priority-low'
+    }`}
+  >
+    {task.priority === 'High' && '🔴 '}
+    {task.priority === 'Medium' && '🟠 '}
+    {task.priority === 'Low' && '🟢 '}
+    {task.priority}
+  </span>
+</td>
 
-                    <td>
-                      {task.status}
-                    </td>
-
+<td>
+  <span
+    className={`status-badge ${
+      task.status === 'Completed'
+        ? 'status-completed'
+        : task.status === 'In Progress'
+        ? 'status-progress'
+        : 'status-pending'
+    }`}
+  >
+    {task.status === 'Completed' && '🟢 '}
+    {task.status === 'In Progress' && '🔵 '}
+    {task.status === 'Pending' && '🟠 '}
+    {task.status}
+  </span>
+</td>
                     {role !==
                       'Collaborator' && (
                       <td className="action-buttons">
@@ -432,10 +532,13 @@ const filteredTasks = visibleTasks.filter(
                       </td>
                     )}
                   </tr>
-                )
-              )}
+      )
+    }
+  )}
+              
             </tbody>
           </table>
+        </div>
         </div>
       </div>
     </>

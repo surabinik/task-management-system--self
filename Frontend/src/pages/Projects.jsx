@@ -80,39 +80,54 @@ function Projects() {
     }
   }
 
-  const toggleProjectStatus = async (
-    project
-  ) => {
-    try {
-      const newStatus =
-        project.status === 'Archived'
-          ? 'Active'
-          : 'Archived'
+const toggleProjectStatus = async (
+  project
+) => {
 
-      await fetch(
-        `http://localhost:5000/projects/${project.id}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type':
-              'application/json'
-          },
-          body: JSON.stringify({
-            name: project.name,
-            status: newStatus,
-            start_date:
-              project.start_date
-                ?.split('T')[0] ||
-              project.start_date
-          })
-        }
-      )
+  const action =
+    project.status === 'Archived'
+      ? 'restore'
+      : 'archive'
 
-      await loadProjects()
-    } catch (error) {
-      console.log(error)
-    }
+  if (
+    !window.confirm(
+      `Are you sure you want to ${action} this project?`
+    )
+  ) {
+    return
   }
+
+  try {
+    const newStatus =
+      project.status === 'Archived'
+        ? 'Active'
+        : 'Archived'
+
+    await fetch(
+      `http://localhost:5000/projects/${project.id}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type':
+            'application/json'
+        },
+        body: JSON.stringify({
+          name: project.name,
+          status: newStatus,
+          start_date:
+            project.start_date?.split(
+              'T'
+            )[0] ||
+            project.start_date
+        })
+      }
+    )
+
+    await loadProjects()
+  } catch (error) {
+    console.log(error)
+  }
+}
 
   const deleteProject = async (id) => {
     if (
@@ -226,20 +241,33 @@ function Projects() {
           </div>
         )}
 
-        <table className="project-table">
+        <div className="project-table-card">
+  <table className="project-table">
           <thead>
             <tr>
               <th>Project Name</th>
               <th>Status</th>
               <th>Start Date</th>
-              <th>Actions</th>
+<th>Progress</th>
+<th>Actions</th>
             </tr>
           </thead>
 
           <tbody>
-            {filteredProjects.map(
-              (project) => (
-                <tr key={project.id}>
+  {filteredProjects.map(
+    (project) => {
+
+      const progress =
+        project.total_tasks > 0
+          ? Math.round(
+              (project.completed_tasks /
+                project.total_tasks) *
+                100
+            )
+          : 0
+
+      return (
+        <tr key={project.id}>
                   <td>
                     {project.name}
                   </td>
@@ -256,7 +284,9 @@ function Projects() {
                           : 'status-active'
                       }
                     >
-                      {project.status}
+                      {project.status === 'Active' && '🟢 Active'}
+{project.status === 'Completed' && '🔵 Completed'}
+{project.status === 'Archived' && '⚫ Archived'}
                     </span>
                   </td>
 
@@ -267,6 +297,23 @@ function Projects() {
                         )[0]
                       : ''}
                   </td>
+
+                  <td>
+  <div className="progress-wrapper">
+
+    <div className="project-progress-bar">
+      <div
+        className="project-progress-fill"
+        style={{
+          width: `${progress}%`
+        }}
+      />
+    </div>
+
+    <span>{progress}%</span>
+
+  </div>
+</td>
 
                   <td>
                    {(role === 'Admin' ||
@@ -296,24 +343,23 @@ function Projects() {
                     {role ===
                       'Project Manager' && (
                       <button
-                        onClick={() =>
-                          toggleProjectStatus(
-                            project
-                          )
-                        }
-                      >
-                        {project.status ===
-                        'Archived'
-                          ? 'Restore'
-                          : 'Archive'}
-                      </button>
+  onClick={() =>
+    toggleProjectStatus(project)
+  }
+>
+  {project.status === 'Archived'
+    ? 'Restore'
+    : 'Archive'}
+</button>
                     )}
                   </td>
-                </tr>
-              )
-            )}
+             </tr>
+      )
+    }
+  )}
           </tbody>
-        </table>
+         </table>
+</div>
       </div>
     </>
   )

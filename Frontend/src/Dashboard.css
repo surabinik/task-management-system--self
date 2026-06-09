@@ -1,116 +1,198 @@
+/* =========================
+   Dashboard Layout
+========================= */
+
 .dashboard {
   margin-left: 250px;
   padding: 40px;
-  text-align: center;
+  color: white;
 }
 
 .dashboard h1 {
-  margin-bottom: 10px;
-}
-
-.welcome-text {
-  color: #2563eb;
+  font-size: 4rem;
   margin-bottom: 5px;
 }
 
-.dashboard-date {
-  color: #666;
-  margin-bottom: 25px;
+.welcome-text {
+  text-align: center;
+  color: #3b82f6;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 10px;
 }
 
+.dashboard-date {
+  text-align: center;
+  color: #94a3b8;
+  margin-bottom: 35px;
+  font-size: 1.2rem;
+}
+
+/* =========================
+   Statistics Cards
+========================= */
+
 .card-container {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 20px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  margin-top: 30px;
 }
 
 .card {
-  background: white;
-  width: 220px;
-  padding: 20px;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-  transition: 0.3s;
+  background: #1e293b;
+  color: white;
+
+  padding: 30px;
+
+  border-radius: 20px;
+
+  border: 1px solid rgba(255,255,255,0.05);
+
+  box-shadow:
+    0 8px 25px rgba(0,0,0,0.35);
+
+  transition: all 0.3s ease;
 }
 
 .card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-6px);
 }
 
 .card h3 {
+  color: #94a3b8;
+  font-size: 18px;
   margin-bottom: 15px;
-  color: #333;
 }
 
 .card p {
-  font-size: 40px;
+  font-size: 42px;
   font-weight: bold;
-  color: #2563eb;
+  color: #3b82f6;
 }
+
+/* Card Accent Colors */
+
+.projects-card p {
+  color: #3b82f6;
+}
+
+.tasks-card p {
+  color: #8b5cf6;
+}
+
+.completed-card p {
+  color: #22c55e;
+}
+
+.pending-card p {
+  color: #f59e0b;
+}
+
+.users-card p {
+  color: #06b6d4;
+}
+
+/* =========================
+   Progress Section
+========================= */
 
 .progress-section {
   margin-top: 35px;
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+
+  background: #1e293b;
+  color: white;
+
+  padding: 30px;
+
+  border-radius: 20px;
+
+  border: 1px solid rgba(255,255,255,0.05);
+
+  box-shadow:
+    0 8px 25px rgba(0,0,0,0.35);
 }
 
 .progress-section h2 {
-  margin-bottom: 15px;
-  color: #333;
+  text-align: center;
+  margin-bottom: 25px;
 }
 
 .progress-bar {
   width: 100%;
-  height: 25px;
-  background: #e5e7eb;
-  border-radius: 20px;
+  height: 30px;
+
+  background: #334155;
+
+  border-radius: 999px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background: #22c55e;
+
+  background: linear-gradient(
+    90deg,
+    #22c55e,
+    #16a34a
+  );
+
   transition: width 0.5s ease;
 }
 
 .progress-text {
-  margin-top: 15px;
+  text-align: center;
+  margin-top: 20px;
+  font-size: 1.5rem;
   font-weight: bold;
-  color: #333;
+  color: #22c55e;
 }
 
-.chart-section {
-  background: white;
-  margin-top: 25px;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+/* =========================
+   Analytics + Activities
+========================= */
+
+.chart-recent-container {
+  display: flex;
+  gap: 25px;
+  margin-top: 30px;
+  align-items: stretch;
 }
 
-.chart-section h2 {
-  margin-bottom: 15px;
-  color: #333;
-}
-
+.chart-section,
 .recent-section {
-  margin-top: 25px;
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  text-align: left;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  flex: 1;
+
+  background: #1e293b;
+  color: white;
+
+  padding: 30px;
+
+  border-radius: 20px;
+
+  border: 1px solid rgba(255,255,255,0.05);
+
+  box-shadow:
+    0 8px 25px rgba(0,0,0,0.35);
+
+  transition: 0.3s ease;
 }
 
+.chart-section:hover,
+.recent-section:hover {
+  transform: translateY(-4px);
+}
+
+.chart-section h2,
 .recent-section h2 {
   text-align: center;
   margin-bottom: 20px;
-  color: #333;
 }
+
+/* =========================
+   Recent Activities
+========================= */
 
 .activity-list {
   list-style: none;
@@ -119,59 +201,69 @@
 }
 
 .activity-list li {
-  background: #f1f5f9;
-  padding: 12px;
-  margin-bottom: 10px;
-  border-left: 4px solid #2563eb;
-  border-radius: 6px;
-  font-size: 16px;
+  background: rgba(59,130,246,0.12);
+
+  color: #e2e8f0;
+
+  padding: 14px;
+
+  margin-bottom: 12px;
+
+  border-left: 4px solid #3b82f6;
+
+  border-radius: 12px;
+
+  transition: 0.3s ease;
+}
+
+.activity-list li:hover {
+  background: rgba(59,130,246,0.18);
 }
 
 .activity-list li:last-child {
   margin-bottom: 0;
 }
 
-.chart-recent-container {
-  display: flex;
-  gap: 20px;
-  margin-top: 25px;
-  align-items: flex-start;
-}
+/* =========================
+   Responsive
+========================= */
 
-.chart-section {
-  flex: 1;
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-}
-
-.recent-section {
-  flex: 1;
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+@media (max-width: 1200px) {
+  .dashboard {
+    margin-left: 220px;
+    padding: 25px;
+  }
 }
 
 @media (max-width: 1000px) {
   .chart-recent-container {
     flex-direction: column;
   }
+
+  .dashboard h1 {
+    font-size: 3.5rem;
+  }
 }
 
-.projects-card {
-  border-top: 5px solid #3b82f6;
+@media (max-width: 768px) {
+  .dashboard {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .dashboard h1 {
+    font-size: 2.8rem;
+  }
+
+  .welcome-text {
+    font-size: 1.4rem;
+  }
 }
 
-.tasks-card {
-  border-top: 5px solid #8b5cf6;
+.chart-section {
+  flex: 1.3;
 }
 
-.completed-card {
-  border-top: 5px solid #22c55e;
-}
-
-.pending-card {
-  border-top: 5px solid #ef4444;
+.recent-section {
+  flex: 1;
 }

@@ -121,11 +121,7 @@ function Dashboard() {
     }
   ]
 
-  const COLORS = [
-    '#22c55e',
-    '#ef4444'
-  ]
-
+  const COLORS = ['#22c55e', '#f59e0b']
   const today =
     new Date().toLocaleDateString()
 

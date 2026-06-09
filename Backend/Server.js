@@ -17,7 +17,25 @@ app.get('/', (req, res) => {
 
 app.get('/projects', (req, res) => {
   db.query(
-    'SELECT * FROM projects',
+    `
+    SELECT
+      p.*,
+      COUNT(t.id) AS total_tasks,
+      SUM(
+        CASE
+          WHEN t.status = 'Completed'
+          THEN 1
+          ELSE 0
+        END
+      ) AS completed_tasks
+
+    FROM projects p
+
+    LEFT JOIN tasks t
+      ON p.id = t.project_id
+
+    GROUP BY p.id
+    `,
     (err, result) => {
       if (err) {
         return res.status(500).json(err)
